@@ -39,7 +39,13 @@ public class Notes implements EntryPoint {
 		inputNoteText.setVisibleLines(3);
 	}
 
+	NoteRequestFactory factory = GWT.create(NoteRequestFactory.class);
+
 	public void onModuleLoad() {
+		DefaultRequestTransport transport = new DefaultRequestTransport();
+		transport.setRequestUrl("/gwt/sample/noterequestfactoryservice");
+		factory.initialize(new SimpleEventBus(), transport);
+
 		final HorizontalPanel mainpanel = new HorizontalPanel();
 
 		final HTML displayTitle = new HTML("Existing Notes");
@@ -131,7 +137,7 @@ public class Notes implements EntryPoint {
 		return str;
 	}
 	public void createNote(String title, String text) {
-		NoteRequestContext context = createFactory().context();
+		NoteRequestContext context = factory.context();
 
 		NoteValueProxy note = context.create(NoteValueProxy.class);
 		note.setTitle(title);
@@ -150,7 +156,7 @@ public class Notes implements EntryPoint {
 	private void getNotes() {
 		notesPanel.clear();
 
-		NoteRequestContext context = createFactory().context();
+		NoteRequestContext context = factory.context();
 		context.getNotes().fire(new Receiver<List<NoteValueProxy>>() {
 			@Override
 			public void onSuccess(List<NoteValueProxy> notesList) {
@@ -171,7 +177,7 @@ public class Notes implements EntryPoint {
 					delButton.addClickHandler(new ClickHandler() {
 
 						public void onClick(ClickEvent event) {
-							NoteRequestContext context = createFactory().context();
+							NoteRequestContext context = factory.context();
 							context.deleteNote(note.getPath()).fire(new Receiver<Void>() {
 
 								@Override
@@ -214,14 +220,6 @@ public class Notes implements EntryPoint {
 			}
 
 		});
-	}	
-
-	private static NoteRequestFactory createFactory() {
-		NoteRequestFactory factory = GWT.create(NoteRequestFactory.class);
-		DefaultRequestTransport transport = new DefaultRequestTransport();
-		transport.setRequestUrl("/gwt/sample/noterequestfactoryservice");
-		factory.initialize(new SimpleEventBus(), transport);
-		return factory;
 	}	
 
 	private void resetForm() {
