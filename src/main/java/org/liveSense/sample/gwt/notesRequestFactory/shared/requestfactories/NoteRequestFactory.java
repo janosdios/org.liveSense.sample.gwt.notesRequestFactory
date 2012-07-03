@@ -1,8 +1,9 @@
-package org.liveSense.sample.gwt.notesRequestFactory.shared;
+package org.liveSense.sample.gwt.notesRequestFactory.shared.requestfactories;
 
 import java.util.List;
 
-import org.liveSense.sample.gwt.notesRequestFactory.server.domain.NoteDao;
+import org.liveSense.sample.gwt.notesRequestFactory.shared.proxies.NoteValueProxy;
+import org.liveSense.sample.gwt.notesRequestFactory.shared.service.NoteDao;
 import org.liveSense.servlet.requestfactory.OsgiServiceLocator;
 
 import com.google.web.bindery.requestfactory.shared.Request;

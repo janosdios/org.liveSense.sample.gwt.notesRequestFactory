@@ -20,14 +20,13 @@
  * @author Janos Dios (janos.dios@allretailconsulting.com)
  * @created Jun 22, 2012
  */
-package org.liveSense.sample.gwt.notesRequestFactory.server.domain;
+package org.liveSense.sample.gwt.notesRequestFactory.shared.domain;
 
 import java.io.Serializable;
+
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.persistence.Version;
 /**
  * This class represents a GWT entity. An entity is a domain class in this application that has concept of a persistent identity.
  * The <code>Note</code> class features simple getters and setters for its data.
@@ -37,99 +36,84 @@ public class NoteBean implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-    /**
-     * The default public constructor.
-     */
-    public NoteBean() {
-    }
-	
 	/**
-     * The String representing the title of the note.
-     */
-    @Size(min = 3, max = 30)
+	 * The default public constructor.
+	 */
+	public NoteBean() {
+	}
+
+	/**
+	 * The String representing the title of the note.
+	 */
+	@Size(min = 3, max = 30)
 	private String title;
 
-    /**
-     * The String representing the text of the note.
-     */
+	/**
+	 * The String representing the text of the note.
+	 */
 	@NotNull
 	private String text;
 
-    /**
-     * The String representing the path of the <code>javax.jcr.Node</code> that this entity is based on.
-     */
-	@NotNull
+	/**
+	 * The String representing the path of the <code>javax.jcr.Node</code> that this entity is based on.
+	 */
 	private String path;
 
-	@Version
-	private Integer version;
-	
-    /**
-     * The setter method for the <code>String</code> representing the title of the note.
-     * 
-     * @param title The <code>String</code> representing the title of the note.
-     */
-    public void setTitle(String title) {
-        this.title = title;
-    }
+	/**
+	 * The setter method for the <code>String</code> representing the title of the note.
+	 * 
+	 * @param title The <code>String</code> representing the title of the note.
+	 */
+	public void setTitle(String title) {
+		this.title = title;
+	}
 
-    /**
-     * The setter method for the <code>String</code> representing the text of the note.
-     * 
-     * @param text The <code>String</code> representing the text of the note.
-     */
-    public void setText(String text) {
-        this.text = text;
-    }
+	/**
+	 * The setter method for the <code>String</code> representing the text of the note.
+	 * 
+	 * @param text The <code>String</code> representing the text of the note.
+	 */
+	public void setText(String text) {
+		this.text = text;
+	}
 
-    /**
-     * The setter method for the <code>String</code> representing the path of the note.
-     * 
-     * @param path The <code>String</code> representing the path of the <code>javax.jcr.Node</code> corresponding
-     *             to this entity.
-     */
-    public void setPath(String path) {
-        this.path = path;
-    }
+	/**
+	 * The setter method for the <code>String</code> representing the path of the note.
+	 * 
+	 * @param path The <code>String</code> representing the path of the <code>javax.jcr.Node</code> corresponding
+	 *             to this entity.
+	 */
+	public void setPath(String path) {
+		this.path = path;
+	}
 
-    public void setVersion(Integer version) {
-        this.version = version;
-    }
-        
-    /**
-     * The getter method for the <code>String</code> representing the title of the note.
-     *
-     * @return The <code>String</code> representing the title of the note.
-     */
-    public String getTitle() {
-        return title;
-    }
+	/**
+	 * The getter method for the <code>String</code> representing the title of the note.
+	 *
+	 * @return The <code>String</code> representing the title of the note.
+	 */
+	public String getTitle() {
+		return title;
+	}
 
-    /**
-     * The getter method for the <code>String</code> representing the text of the note.
-     *
-     * @return The <code>String</code> representing the text of the note.
-     */
-    public String getText() {
-        return text;
-    }
+	/**
+	 * The getter method for the <code>String</code> representing the text of the note.
+	 *
+	 * @return The <code>String</code> representing the text of the note.
+	 */
+	public String getText() {
+		return text;
+	}
 
-    /**
-     * The getter method for the <code>String</code> representing the path of the <code>javax.jcr.Node</code>
-     * corresponding to this entity.
-     *
-     * @return The <code>String</code> representing the path of the note.
-     */
-    public String getPath() {
-        return path;
-    }
-    
-    public Integer getVersion() {
-    	return this.version;
-    }
-    
-    public String getId() {
-        return this.path;
-    }
+	/**
+	 * The getter method for the <code>String</code> representing the path of the <code>javax.jcr.Node</code>
+	 * corresponding to this entity.
+	 *
+	 * @return The <code>String</code> representing the path of the note.
+	 */
+	public String getPath() {
+		return path;
+	}
+
 
 }

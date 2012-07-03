@@ -1,6 +1,8 @@
-package org.liveSense.sample.gwt.notesRequestFactory.server.domain;
+package org.liveSense.sample.gwt.notesRequestFactory.shared.service;
 
 import java.util.List;
+
+import org.liveSense.sample.gwt.notesRequestFactory.shared.domain.NoteBean;
 
 public interface NoteDao {
 	public void createNote(NoteBean note);

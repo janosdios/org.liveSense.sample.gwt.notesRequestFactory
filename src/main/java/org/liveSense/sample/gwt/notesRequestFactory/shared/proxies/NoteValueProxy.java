@@ -1,7 +1,7 @@
-package org.liveSense.sample.gwt.notesRequestFactory.shared;
+package org.liveSense.sample.gwt.notesRequestFactory.shared.proxies;
 
 //import org.liveSense.sample.gwt.notesRequestFactory.server.NoteLocator;
-import org.liveSense.sample.gwt.notesRequestFactory.server.domain.NoteBean;
+import org.liveSense.sample.gwt.notesRequestFactory.shared.domain.NoteBean;
 
 import com.google.web.bindery.requestfactory.shared.ProxyFor;
 import com.google.web.bindery.requestfactory.shared.ValueProxy;
