@@ -2,23 +2,16 @@ package org.liveSense.sample.gwt.notesRequestFactory.client;
 
 import java.util.List;
 
-import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.RootLayoutPanel;
-import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.event.shared.SimpleEventBus;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-
 import org.liveSense.sample.gwt.notesRequestFactory.shared.NoteRequestFactory;
 import org.liveSense.sample.gwt.notesRequestFactory.shared.NoteRequestFactory.NoteRequestContext;
-import org.liveSense.sample.gwt.notesRequestFactory.shared.NoteEntityProxy;
+import org.liveSense.sample.gwt.notesRequestFactory.shared.NoteValueProxy;
 
-import com.google.web.bindery.requestfactory.shared.Receiver;
-import com.google.web.bindery.requestfactory.shared.ServerFailure;
-
-import com.google.gwt.user.client.ui.Button;
-
+import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.shared.SimpleEventBus;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HTML;
@@ -29,7 +22,9 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.Window;
+import com.google.web.bindery.requestfactory.gwt.client.DefaultRequestTransport;
+import com.google.web.bindery.requestfactory.shared.Receiver;
+import com.google.web.bindery.requestfactory.shared.ServerFailure;
 
 public class Notes implements EntryPoint {
 
@@ -129,7 +124,7 @@ public class Notes implements EntryPoint {
 	public void createNote(String title, String text) {
 		NoteRequestContext context = createFactory().context();
 
-		NoteEntityProxy note = context.create(NoteEntityProxy.class);
+		NoteValueProxy note = context.create(NoteValueProxy.class);
 		note.setTitle(title);
 		note.setText(text);
     
@@ -147,10 +142,10 @@ public class Notes implements EntryPoint {
 		notesPanel.clear();
 		
 		NoteRequestContext context = createFactory().context();
-		context.getNotes().fire(new Receiver<List<NoteEntityProxy>>() {
-			public void onSuccess(List<NoteEntityProxy> notesList) {
+		context.getNotes().fire(new Receiver<List<NoteValueProxy>>() {
+			public void onSuccess(List<NoteValueProxy> notesList) {
                 for (int i = 0; i < notesList.size(); i++) {
-                    NoteEntityProxy note = notesList.get(i);
+                    final NoteValueProxy note = notesList.get(i);
 
                     final HorizontalPanel noteEntry = new HorizontalPanel();
                     noteEntry.setStyleName("noteEntry");
@@ -163,11 +158,20 @@ public class Notes implements EntryPoint {
 
                     final Button delButton = new Button("Delete");
                     delButton.setStyleName("noteControls");
-//                    delButton.addClickListener(new ClickListener() {
+                    delButton.addClickListener(new ClickListener() {
 
-//                       public void onClick(Widget widget) {
-//                            deleteNote(note.getPath());
-//                        }
+                       public void onClick(Widget widget) {
+                    	   NoteRequestContext context = createFactory().context();
+                    	   context.deleteNote(note.getPath());
+                       }
+                    });
+                    
+                    noteEntry.add(noteTitle);
+                    noteEntry.add(noteText);
+                    noteEntry.add(delButton);
+
+                    notesPanel.add(noteEntry);
+
                 }
 			}
                 
@@ -180,7 +184,9 @@ public class Notes implements EntryPoint {
 		
 	private static NoteRequestFactory createFactory() {
 	    NoteRequestFactory factory = GWT.create(NoteRequestFactory.class);
-	    factory.initialize(new SimpleEventBus());
+	    DefaultRequestTransport transport = new DefaultRequestTransport();
+	    transport.setRequestUrl("/gwt/sample/noterequestfactoryservice");
+	    factory.initialize(new SimpleEventBus(), transport);
 	    return factory;
 	}	
 	

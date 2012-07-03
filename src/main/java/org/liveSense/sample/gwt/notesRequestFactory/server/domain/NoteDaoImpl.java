@@ -10,9 +10,11 @@ import javax.jcr.Session;
 
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.Deactivate;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
 import org.apache.sling.jcr.api.SlingRepository;
+import org.liveSense.servlet.requestfactory.OsgiServiceLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +44,7 @@ public class NoteDaoImpl implements NoteDao {
 	@Activate
 	protected void activate() {
 		Session session = null;
+		OsgiServiceLocator.addToCache(NoteDao.class, this);
 		try {
 			session = getAdministrativeSession();
 		} catch (RepositoryException e) {
@@ -60,6 +63,10 @@ public class NoteDaoImpl implements NoteDao {
 		}
 	}
 
+	@Deactivate
+	protected void deactivate() {
+		OsgiServiceLocator.removeFromCache(NoteDao.class);	
+	}
 
 	public void createNote(NoteBean note) {
 		Session session = null;
