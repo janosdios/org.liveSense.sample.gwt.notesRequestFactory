@@ -22,25 +22,25 @@
  */
 package org.liveSense.sample.gwt.notesRequestFactory.service;
 
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+
+import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
+import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
-import org.apache.sling.jcr.api.SlingRepository;
-import org.liveSense.sample.gwt.notesRequestFactory.server.domain.NoteDao;
-import org.liveSense.sample.gwt.notesRequestFactory.server.domain.NoteDaoImpl;
+import org.apache.sling.commons.classloader.DynamicClassLoaderManager;
+import org.apache.sling.commons.osgi.PropertiesUtil;
+import org.liveSense.servlet.requestfactory.GWTRequestFactoryServlet;
 import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.felix.scr.annotations.Reference;
 
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import java.util.ArrayList;
-
-import org.apache.felix.scr.annotations.Activate;
+import com.google.web.bindery.requestfactory.server.ServiceLayer;
+import com.google.web.bindery.requestfactory.server.SimpleRequestProcessor;
+import com.google.web.bindery.requestfactory.shared.ServerFailure;
 
 /**
  * This class implements a servlet-based RPC remote service for handling RPC calls from the GWT client application.
@@ -57,14 +57,21 @@ import org.apache.felix.scr.annotations.Activate;
  * <code>Notes.gwt.xml</code> module configuration file.
  */
 
-@Component(label = "%noterequestfactoryservice.label", metatype=true, immediate=true)
-@Service
-public class NotesRequestFactoryServiceImpl implements NotesRequestFactoryService {
+@Component(label = "%noterequestfactoryservice.label", metatype=true, immediate=true, inherit=true)
+@Service(value = javax.servlet.Servlet.class)
+@Properties(value = {
+		@Property(label ="%servletPath" , name = "sling.servlet.paths", value = "/gwt/sample/noterequestfactoryservice", propertyPrivate=true ),
+		@Property(label="%useGoogleCache", name = NotesRequestFactoryServlet.PROP_USE_GOOGLE_CACHE, boolValue = false)
+})
+
+public class NotesRequestFactoryServlet extends GWTRequestFactoryServlet {
+
+	public static final String PROP_USE_GOOGLE_CACHE = "useGoogleCache";
 
     /**
      * The logging facility.
      */
-    private static final Logger log = LoggerFactory.getLogger(NotesRequestFactoryServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(NotesRequestFactoryServlet.class);
 
     /**
      * The <code>String</code> constant representing the name of the <code>javax.jcr.Property</code> in which the
@@ -89,9 +96,10 @@ public class NotesRequestFactoryServiceImpl implements NotesRequestFactoryServic
      * through an administrative login.
      */
     private Session session;
+    
+	@Reference
+	protected DynamicClassLoaderManager dynamicClassLoaderManager;
 
-    @Reference
-    private SlingRepository repository;
  
     /**
      * This is the OSGi component/service activation method. It initializes this service.
@@ -101,21 +109,40 @@ public class NotesRequestFactoryServiceImpl implements NotesRequestFactoryServic
 	@Activate
     protected void activate(ComponentContext context) throws RepositoryException {
         log.info("activate: initialized and provided classloader {} to GWT.", this.getClass().getClassLoader());
+        
+		// Set google serviceLayerCache off
+		System.setProperty("gwt.rf.ServiceLayerCache", new Boolean(PropertiesUtil.toBoolean(context.getProperties().get(PROP_USE_GOOGLE_CACHE), false)).toString());
+
+		getDefaultExceptionHandler().setRequestFactoryServlet(this);
+		ClassLoader old = Thread.currentThread().getContextClassLoader();
+		Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
+		processor = new SimpleRequestProcessor(ServiceLayer.create(new NotesSampleServiceLayerDecorator(dynamicClassLoaderManager.getDynamicClassLoader())));
+		processor.setExceptionHandler(getDefaultExceptionHandler());
+		Thread.currentThread().setContextClassLoader(old);
+
 
         try {
             // retrieve a session from the repository
-            session = repository.loginAdministrative(repository.getDefaultWorkspace());
+            session = getRepository().loginAdministrative(getRepository().getDefaultWorkspace());
         } catch (RepositoryException e) {
             log.error("activate: repository unavailable: " + context + ": ", e);
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public NoteDao getNoteDaoInstance(Session session) {
-    	return new NoteDaoImpl(session);
-    }
+	@Override
+	public void callInit() throws Throwable {
+		log.info("callInit");
+	}
+
+	@Override
+	public void callFinal() throws Throwable {
+		log.info("callFinal");
+	}
+
+	@Override
+	public ServerFailure failure(Throwable throwable) {
+		return new ServerFailure(throwable.getMessage());
+	}
 
 
 }

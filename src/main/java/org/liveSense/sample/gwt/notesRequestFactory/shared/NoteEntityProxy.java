@@ -10,7 +10,7 @@ import com.google.web.bindery.requestfactory.shared.ProxyFor;
  * This interface is the note's entity-proxy. 
  * An entity proxy is a client-side representation of a server-side entity. The proxy interfaces are implemented by RequestFactory. * 
  */
-@ProxyFor(value = NoteBean.class /*, locator = NoteLocator.class */)
+@ProxyFor(value = NoteBean.class)
 public interface NoteEntityProxy extends EntityProxy {
 
     public void setTitle(String title);

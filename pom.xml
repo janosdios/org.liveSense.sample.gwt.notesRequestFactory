@@ -138,20 +138,6 @@
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-scr-plugin</artifactId>
 			</plugin>
-          	
-   				<plugin>
-					<groupId>org.apache.sling</groupId>
-					<artifactId>maven-sling-plugin</artifactId>
-					<executions>
-						<execution>
-							<id>Install-Bundle</id>
-							<goals>
-								<goal>install</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-
 
 		      <!-- requestfactory-apt runs an annotation processor (APT) to
 		           instrument its service interfaces so that
@@ -270,16 +256,6 @@
 				</executions>
 			</plugin>
 
-
-
-
-
-
-
-
-
-
-
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
@@ -300,8 +276,10 @@
 							SLING-INF/sling-scripts=src/main/resources/sling-scripts,
 							SLING-INF/gwt-app=target/${project.artifactId}-${project.version},
 							META-INF=target/maven-shared-archive-resources/META-INF,
-							{maven-resources}
-							<!-- hu/libra/libraweb/customerinvoice/client/gwt/client/requestfactories=war/WEB-INF/classes/hu/libra/libraweb/customerinvoice/client/gwt/client/requestfactories-->
+							OSGI-INF=target/scr-plugin-generated/OSGI-INF,
+							org/liveSense/sample/gwt/notesRequestFactory/server=war/WEB-INF/classes/org/liveSense/sample/gwt/notesRequestFactory/server,
+							org/liveSense/sample/gwt/notesRequestFactory/shared=war/WEB-INF/classes/org/liveSense/sample/gwt/notesRequestFactory/shared,
+							org/liveSense/sample/gwt/notesRequestFactory/service=war/WEB-INF/classes/org/liveSense/sample/gwt/notesRequestFactory/service
 						</Include-Resource>
 		
 						<!-- Initial bundle configurations (for example FsResource) -->
@@ -408,6 +386,11 @@
 			<artifactId>org.liveSense.service.securityManager</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>org.liveSense</groupId>
+			<artifactId>org.liveSense.framework.gwt</artifactId>
+		</dependency>
+
 		<!-- Sling dependencies -->
 		<dependency>
 			<groupId>org.apache.sling</groupId>
@@ -417,7 +400,14 @@
 			<groupId>org.apache.sling</groupId>
 			<artifactId>org.apache.sling.api</artifactId>
 		</dependency>
-
+		<dependency>
+			<groupId>org.apache.sling</groupId>
+			<artifactId>org.apache.sling.auth.core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.sling</groupId>
+			<artifactId>org.apache.sling.jcr.api</artifactId>
+		</dependency>
 
 		<!-- Felix, JaCkRabbit dependencies -->
 		<dependency>
