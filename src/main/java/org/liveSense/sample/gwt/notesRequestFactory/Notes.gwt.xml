@@ -1,0 +1,21 @@
+<module>
+
+	<!-- Inherit the core Web Toolkit stuff.                        -->
+	<inherits name='com.google.gwt.user.User' />
+	<inherits name="com.google.gwt.logging.Logging"/>
+	<inherits name='com.google.web.bindery.requestfactory.RequestFactory'/>
+
+    <entry-point class='org.liveSense.sample.gwt.notesRequestFactory.client.Notes'/>	
+
+  	<source path='client' />
+  	<source path='shared' />
+
+    <set-property name="gwt.logging.enabled" value="TRUE"/>
+  	<set-property name="gwt.logging.logLevel" value="FINE"/>
+  	<set-property name="gwt.logging.consoleHandler" value="ENABLED" />
+  	<set-property name="gwt.logging.developmentModeHandler" value="DISABLED" />
+  	<set-property name="gwt.logging.popupHandler" value="DISABLED" />
+  	<set-property name="gwt.logging.systemHandler" value="ENABLED" />
+	<set-property name="gwt.logging.simpleRemoteHandler" value="DISABLED" />    
+
+</module>

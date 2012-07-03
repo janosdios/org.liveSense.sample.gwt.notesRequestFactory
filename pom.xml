@@ -1,0 +1,471 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  	<modelVersion>4.0.0</modelVersion>
+
+  	<parent>
+      	<groupId>org.liveSense</groupId>
+      	<artifactId>org.liveSense.parent</artifactId>
+      	<version>1-SNAPSHOT</version>
+  	</parent>
+
+	<!-- TODO -->
+
+  	<artifactId>org.liveSense.sample.gwt.notesRequestFactory</artifactId>
+  	<version>1.0.0-SNAPSHOT</version>
+  	<name>org.liveSense.sample.gwt.notesRequestFactory</name>
+  	<description>liveSense gwt sample using RequestFactory.</description>
+ 	<packaging>bundle</packaging>
+  
+	<properties>
+	    <gwt.project>Notes</gwt.project>
+	</properties>
+  
+	<profiles>
+		<profile>
+			<id>release</id>
+			<properties>
+				<!--  All GWT modules -->
+				<!-- <gwt.module>${project.artifactId}.${gwt.project}</gwt.module>  -->
+				<gwt.draftCompile>false</gwt.draftCompile>
+			</properties>
+			<activation>
+				<file>
+					<missing>${basedir}/development</missing>
+				</file>
+          	</activation>
+		</profile>
+
+		<profile>
+			<id>development</id>
+			<properties>
+				<!--  Development module only -->
+				<gwt.module>${project.artifactId}.${gwt.project}Development</gwt.module>
+				<gwt.draftCompile>true</gwt.draftCompile>
+			</properties>
+			<activation>
+				<file>
+          			<exists>${basedir}/development</exists>
+          		</file>
+			</activation>
+		</profile>
+
+	</profiles>
+  
+	<build>
+		<outputDirectory>${basedir}/war/WEB-INF/classes</outputDirectory>
+	
+	     <resources>
+			<resource>
+				<directory>src/main/java</directory>
+				<filtering>false</filtering>
+			</resource>
+			<resource>
+				<targetPath>${basedir}/war</targetPath>
+				<directory>src/main/gwthosted-webapp</directory>
+				<filtering>false</filtering>
+			</resource>
+
+			<resource>
+				<targetPath>${basedir}/target</targetPath>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+			</resource>
+			
+			<!-- For prototype verifier only  -->
+			<resource>
+				<targetPath>${basedir}/war/WEB-INF/classes</targetPath>
+				<directory>src/main/gwthosted-webapp</directory>
+				<filtering>false</filtering>
+			</resource>
+        </resources>        
+
+        <pluginManagement>
+        	<plugins>
+        	
+
+        		<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+        		<plugin>
+        			<groupId>org.eclipse.m2e</groupId>
+        			<artifactId>lifecycle-mapping</artifactId>
+        			<version>1.0.0</version>
+        			<configuration>
+        				<lifecycleMappingMetadata>
+        					<pluginExecutions>
+        						<pluginExecution>
+        							<pluginExecutionFilter>
+        								<groupId>
+        									org.codehaus.mojo
+        								</groupId>
+        								<artifactId>
+        									build-helper-maven-plugin
+        								</artifactId>
+        								<versionRange>
+        									[1.7,)
+        								</versionRange>
+        								<goals>
+        									<goal>add-source</goal>
+        									<goal>add-resource</goal>
+        								</goals>
+        							</pluginExecutionFilter>
+        							<action>
+        								<ignore></ignore>
+        							</action>
+        						</pluginExecution>
+        					</pluginExecutions>
+        				</lifecycleMappingMetadata>
+        			</configuration>
+        		</plugin>
+        	</plugins>
+        </pluginManagement>
+
+
+        <plugins>
+			<!--  Cleaning  -->
+			<plugin>
+				<artifactId>maven-clean-plugin</artifactId>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>war</directory>
+						</fileset>
+						<fileset>
+							<directory>gwt-unitCache</directory>
+						</fileset>
+					</filesets>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-scr-plugin</artifactId>
+			</plugin>
+          	
+   				<plugin>
+					<groupId>org.apache.sling</groupId>
+					<artifactId>maven-sling-plugin</artifactId>
+					<executions>
+						<execution>
+							<id>Install-Bundle</id>
+							<goals>
+								<goal>install</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+
+
+		      <!-- requestfactory-apt runs an annotation processor (APT) to
+		           instrument its service interfaces so that
+		           RequestFactoryServer can decode client requests. Normally
+		           you would just have a dependency on requestfactory-apt
+		           with <scope>provided</scope>, but that won't work in
+		           eclipse due to m2e bug
+		           https://bugs.eclipse.org/bugs/show_bug.cgi?id=335036 -->
+			<plugin>
+				<groupId>org.bsc.maven</groupId>
+				<artifactId>maven-processor-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>process</id>
+						<goals>
+							<goal>process</goal>
+						</goals>
+						<phase>generate-sources</phase>
+					</execution>
+				</executions>
+				<!-- 
+						          <configuration>
+						            <processors>
+						               <processor> hu.libra.libraweb.core.client.gwt.annotationprocessors.LibraPanelAnnotationMenuProcessor</processor>
+						            </processors>
+						          </configuration> 
+				-->
+				<dependencies>
+					<!-- Classpath trick because our Deobfuscator override needs it -->
+					<dependency>
+						<groupId>com.google.web.bindery</groupId>
+						<artifactId>requestfactory-apt</artifactId>
+						<version>${gwt.version}</version>
+					</dependency>
+<!--
+					<dependency>
+						<groupId>hu.libra</groupId>
+						<artifactId>hu.libra.libraweb.core.client.gwt</artifactId>
+						<version>1.0.0-SNAPSHOT</version>
+					</dependency>
+-->
+				</dependencies>
+			</plugin>
+		      <!-- Google Plugin for Eclipse (GPE) won't see the source
+		           generated above by requestfactory-apt unless it is exposed
+		           as an additional source dir-->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${project.build.directory}/generated-sources/apt</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+          		<groupId>org.apache.maven.plugins</groupId>
+          			<artifactId>maven-compiler-plugin</artifactId>
+          			<executions>
+          				<execution>
+          					<id>compile-apt</id>
+          					<phase>generate-sources</phase>
+		          			<configuration>
+		          					<generatedSourcesDirectory>${project.build.directory}/generated-sources/apt</generatedSourcesDirectory>
+		    		      		</configuration>
+          				</execution>
+          			</executions>
+	        </plugin>
+		      <!-- The Eclipse won't see the source
+		           generated above by axis tools unless it is exposed
+		           as an additional source dir-->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${project.build.directory}/generated-sources/apt</source>
+							</sources>
+						</configuration>
+					</execution>
+
+					<execution>
+						<id>add-resource</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-resource</goal>
+						</goals>
+						<configuration>
+							<resources>
+				                <resource>
+				                  <directory>${project.build.directory}/generated-sources/apt</directory>
+				                  <includes>
+				                    <include>**/*</include>
+				                  </includes>
+				                </resource>
+			                </resources>
+						</configuration>
+					</execution>
+
+				</executions>
+			</plugin>
+
+
+
+
+
+
+
+
+
+
+
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<!-- Export request factory packages -->
+						<Export-Package>
+							org.liveSense.sample.gwt.notesRequestFactory.*
+						</Export-Package>
+						
+						<!-- Copy the files from filesystem to Bundle -->
+						<Include-Resource> 
+							SLING-INF/jcr-contents=src/main/resources/jcr-contents,
+							SLING-INF/jcr-nodes=src/main/resources/jcr-nodes,
+							SLING-INF/jcr-nodetypes=src/main/resources/jcr-nodetypes,
+							SLING-INF/osgi-configurations=src/main/resources/osgi-configurations,
+							SLING-INF/sling-scripts=src/main/resources/sling-scripts,
+							SLING-INF/gwt-app=target/${project.artifactId}-${project.version},
+							META-INF=target/maven-shared-archive-resources/META-INF,
+							{maven-resources}
+							<!-- hu/libra/libraweb/customerinvoice/client/gwt/client/requestfactories=war/WEB-INF/classes/hu/libra/libraweb/customerinvoice/client/gwt/client/requestfactories-->
+						</Include-Resource>
+		
+						<!-- Initial bundle configurations (for example FsResource) -->
+						<Felix-Initial-Configuration>
+							SLING-INF/osgi-configurations
+						</Felix-Initial-Configuration>
+						<!-- initial content to be loaded on bundle installation -->
+						<Sling-Initial-Content> 
+							SLING-INF/jcr-nodes;overwrite:=false;uninstall:=true;overwriteProperties=true,
+							SLING-INF/jcr-contents;overwrite:=true;uninstall:=true;overwriteProperties=true,
+							SLING-INF/gwt-app;path:=/gwt;overwrite:=true;uninstall:=true
+						</Sling-Initial-Content>
+						<!-- Delegate Bundle content as resource -->
+						<Sling-Bundle-Resources> 
+							/apps;path:=/SLING-INF/sling-scripts
+						</Sling-Bundle-Resources>
+						<!-- node types to be created -->
+						<Sling-Nodetypes>
+						</Sling-Nodetypes>
+
+                        <Import-Package>
+                            *;resolution:=optional
+                        </Import-Package>
+						
+					</instructions>
+				</configuration>
+			</plugin>			
+
+
+
+
+			
+			<!-- GWT compilation -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>gwt-maven-plugin</artifactId>
+				<configuration>
+					<!-- extraJvmArgs only to avoid out of memory errors while compiling GWT  -->
+					<runTarget>/index.html</runTarget>
+					<extraJvmArgs>-Xms128M -Xmx1536M -Xss256M -XX:MaxPermSize=256M</extraJvmArgs>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Skip GwtTest by JUnit in maven -->	
+			<plugin>
+    			<artifactId>maven-surefire-plugin</artifactId>
+			    <configuration>
+			      <excludes>
+			        <exclude>**/*GwtTest.java</exclude>
+			      </excludes>
+			    </configuration>
+ 			</plugin>
+
+		</plugins>
+
+	</build>
+  
+  
+	<dependencies>
+		<dependency>
+			<groupId>com.google.gwt</groupId>
+			<artifactId>gwt-user</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.google.gwt</groupId>
+			<artifactId>gwt-servlet</artifactId>
+  			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.google.gwt</groupId>
+			<artifactId>gwt-dev</artifactId>
+			<version>${gwt.version}</version>
+			<!--  scope>runtime</scope -->
+		</dependency>
+
+
+		<!-- liveSense dependencies -->
+		<dependency>
+			<groupId>org.liveSense</groupId>
+			<artifactId>org.liveSense.misc.queryBuilder</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.liveSense</groupId>
+			<artifactId>org.liveSense.misc.i18n</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.liveSense</groupId>
+			<artifactId>org.liveSense.scripting.jsp.taglib.jstl</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.liveSense</groupId>
+			<artifactId>org.liveSense.scripting.jsp.taglib.json</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.liveSense</groupId>
+			<artifactId>org.liveSense.service.securityManager</artifactId>
+		</dependency>
+
+		<!-- Sling dependencies -->
+		<dependency>
+			<groupId>org.apache.sling</groupId>
+			<artifactId>org.apache.sling.scripting.jsp.taglib</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.sling</groupId>
+			<artifactId>org.apache.sling.api</artifactId>
+		</dependency>
+
+
+		<!-- Felix, JaCkRabbit dependencies -->
+		<dependency>
+			<groupId>javax.jcr</groupId>
+			<artifactId>jcr</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		
+		<!-- GWT Hosted mode - For JNDI Database access -->
+		<dependency>
+			<groupId>org.mortbay.jetty</groupId>
+			<artifactId>jetty-plus</artifactId>
+			<version>6.1.19</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mortbay.jetty</groupId>
+			<artifactId>jetty-naming</artifactId>
+			<version>6.1.19</version>
+			<scope>runtime</scope>
+		</dependency>
+
+
+	
+        <dependency>
+    		<groupId>org.apache.felix</groupId>
+    		<artifactId>org.apache.felix.scr.annotations</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.core</artifactId>
+			<version>4.2.0</version><!--$NO-MVN-MAN-VER$-->
+		</dependency>
+  		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.compendium</artifactId>
+			<version>4.2.0</version><!--$NO-MVN-MAN-VER$-->
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20090211</version>
+		</dependency>
+                     
+	</dependencies>
+	
+</project>

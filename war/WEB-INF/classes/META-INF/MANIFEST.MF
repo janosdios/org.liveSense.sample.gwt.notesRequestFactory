@@ -1,0 +1,29 @@
+Manifest-Version: 1.0
+Export-Package: org.liveSense.sample.gwt.notesRequestFactory.client;ve
+ rsion="1.0.0.SNAPSHOT",org.liveSense.sample.gwt.notesRequestFactory.s
+ ervice;version="1.0.0.SNAPSHOT",org.liveSense.sample.gwt.notesRequest
+ Factory.server;version="1.0.0.SNAPSHOT",org.liveSense.sample.gwt.note
+ sRequestFactory.shared;version="1.0.0.SNAPSHOT",org.liveSense.sample.
+ gwt.notesRequestFactory;version="1.0.0.SNAPSHOT",org.liveSense.sample
+ .gwt.notesRequestFactory.server.domain;version="1.0.0.SNAPSHOT"
+Built-By: janosdios
+Tool: Bnd-1.43.0
+Bundle-Category: liveSense
+Bundle-Name: org.liveSense.sample.gwt.notesRequestFactory
+Created-By: Apache Maven Bundle Plugin
+Sling-Initial-Content: SLING-INF/jcr-nodes;overwrite:=false;uninstall:
+ =true;overwriteProperties=true,SLING-INF/jcr-contents;overwrite:=true
+ ;uninstall:=true;overwriteProperties=true,SLING-INF/gwt-app;path:=/gw
+ t;overwrite:=true;uninstall:=true
+Bundle-Vendor: liveSense.org
+Felix-Initial-Configuration: SLING-INF/osgi-configurations
+Build-Jdk: 1.6.0_33
+Bundle-Version: 1.0.0.SNAPSHOT
+Sling-Bundle-Resources: /apps;path:=/SLING-INF/sling-scripts
+Bnd-LastModified: 1341303933280
+Bundle-ManifestVersion: 2
+Bundle-License: http://www.apache.org/licenses/LICENSE-2.0.txt
+Bundle-Description: liveSense gwt sample using RequestFactory.
+Bundle-DocURL: http://livesense.org
+Bundle-SymbolicName: org.liveSense.sample.gwt.notesRequestFactory
+
